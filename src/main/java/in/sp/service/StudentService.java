@@ -10,7 +10,8 @@ import in.sp.util.RegexPatterns;
 
 public class StudentService {
 
-	private StudentRepository studentRepository = new StudentRepository();
+	private StudentRepository studentRepository =
+			new StudentRepository();
 
 	public String register(Student student) throws Exception {
 
@@ -62,7 +63,31 @@ public class StudentService {
 			return "Weak password! Use uppercase, lowercase, number, special character and minimum 8 characters";
 		}
 
-		if (studentRepository.emailExists(student.getEmail())) {
+		Student existingStudent =
+				studentRepository.findByEmail(student.getEmail());
+
+		String hashedPassword =
+				BCrypt.hashpw(
+						student.getPassword(),
+						BCrypt.gensalt()
+				);
+
+		student.setPassword(hashedPassword);
+
+		if (existingStudent != null) {
+
+			if ("REJECTED".equalsIgnoreCase(existingStudent.getStatus())) {
+
+				boolean updated =
+						studentRepository.updateRejectedStudent(student);
+
+				if (updated) {
+					return "success";
+				} else {
+					return "Registration update failed";
+				}
+			}
+
 			return "Email already exists";
 		}
 
@@ -70,14 +95,8 @@ public class StudentService {
 			return "Aadhaar ID already exists";
 		}
 
-		String hashedPassword = BCrypt.hashpw(
-						student.getPassword(),
-						BCrypt.gensalt()
-				);
-
-		student.setPassword(hashedPassword);
-
-		boolean saved = studentRepository.savePendingStudent(student);
+		boolean saved =
+				studentRepository.savePendingStudent(student);
 
 		if (saved) {
 			return "success";
@@ -86,8 +105,7 @@ public class StudentService {
 		}
 	}
 
-	public String login( String email,
-			String password) throws Exception {
+	public String login(String email, String password) throws Exception {
 
 		if (isEmpty(email)) {
 			return "Email cannot be empty";
@@ -101,7 +119,8 @@ public class StudentService {
 			return "Password cannot be empty";
 		}
 
-		Student student = studentRepository.findByEmail(email);
+		Student student =
+				studentRepository.findByEmail(email);
 
 		if (student == null) {
 			return "Email not found";
@@ -112,16 +131,7 @@ public class StudentService {
 		}
 
 		if ("REJECTED".equalsIgnoreCase(student.getStatus())) {
-
-			String reason = student.getRejectionReason();
-
-			if (reason == null || reason.trim().isEmpty()) {
-				reason = "No reason provided";
-			}
-
-			return "Your registration request was rejected. Reason: "
-					+ reason
-					+ ". Please register again.";
+			return "Your registration request was rejected";
 		}
 
 		if (!BCrypt.checkpw(password, student.getPassword())) {
@@ -161,16 +171,10 @@ public class StudentService {
 		}
 
 		String hashedPassword =
-				BCrypt.hashpw(
-						newPassword,
-						BCrypt.gensalt()
-				);
+				BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
 		boolean updated =
-				studentRepository.updatePassword(
-						email,
-						hashedPassword
-				);
+				studentRepository.updatePassword(email, hashedPassword);
 
 		if (updated) {
 			return "success";
@@ -183,10 +187,6 @@ public class StudentService {
 			String email,
 			String oldPassword,
 			String newPassword) throws Exception {
-
-		if (isEmpty(email)) {
-			return "User session expired. Please login again";
-		}
 
 		if (isEmpty(oldPassword)) {
 			return "Old password cannot be empty";
@@ -212,16 +212,10 @@ public class StudentService {
 		}
 
 		String hashedPassword =
-				BCrypt.hashpw(
-						newPassword,
-						BCrypt.gensalt()
-				);
+				BCrypt.hashpw(newPassword, BCrypt.gensalt());
 
 		boolean updated =
-				studentRepository.updatePassword(
-						email,
-						hashedPassword
-				);
+				studentRepository.updatePassword(email, hashedPassword);
 
 		if (updated) {
 			return "success";
@@ -246,14 +240,6 @@ public class StudentService {
 
 		if (!Pattern.matches(RegexPatterns.MOBILE_REGEX, student.getMobile())) {
 			return "Mobile number must contain 10 digits only";
-		}
-
-		if (isEmpty(student.getGender())) {
-			return "Gender cannot be empty";
-		}
-
-		if (isEmpty(student.getOccupation())) {
-			return "Occupation cannot be empty";
 		}
 
 		if (isEmpty(student.getAadhaarId())) {

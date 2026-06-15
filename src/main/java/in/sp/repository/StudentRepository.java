@@ -323,4 +323,25 @@ public class StudentRepository {
 		ps.setInt(1, requestId);
 		return ps.executeUpdate() > 0;
 	}
+	public boolean updateRejectedStudent(Student student) throws Exception {
+
+		String query =
+				"UPDATE students SET name=?, mobile=?, gender=?, "
+				+ "occupation=?, aadhaar_id=?, password=?, "
+				+ "status='PENDING', rejection_reason=NULL "
+				+ "WHERE email=? AND status='REJECTED'";
+
+		PreparedStatement ps =
+				getConnection().prepareStatement(query);
+
+		ps.setString(1, student.getName());
+		ps.setString(2, student.getMobile());
+		ps.setString(3, student.getGender());
+		ps.setString(4, student.getOccupation());
+		ps.setString(5, student.getAadhaarId());
+		ps.setString(6, student.getPassword());
+		ps.setString(7, student.getEmail());
+
+		return ps.executeUpdate() > 0;
+	}
 }
