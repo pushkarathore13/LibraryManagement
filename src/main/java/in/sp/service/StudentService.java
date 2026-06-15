@@ -47,6 +47,10 @@ public class StudentService {
 			return "Occupation cannot be empty";
 		}
 
+		if (!Pattern.matches(RegexPatterns.NAME_REGEX, student.getOccupation())) {
+			return "Occupation should contain alphabets only";
+		}
+
 		if (isEmpty(student.getAadhaarId())) {
 			return "Aadhaar ID cannot be empty";
 		}
@@ -240,6 +244,18 @@ public class StudentService {
 
 		if (!Pattern.matches(RegexPatterns.MOBILE_REGEX, student.getMobile())) {
 			return "Mobile number must contain 10 digits only";
+		}
+
+		if (isEmpty(student.getGender())) {
+			return "Gender cannot be empty";
+		}
+
+		if (isEmpty(student.getOccupation())) {
+			return "Occupation cannot be empty";
+		}
+
+		if (!Pattern.matches(RegexPatterns.NAME_REGEX, student.getOccupation())) {
+			return "Occupation should contain alphabets only";
 		}
 
 		if (isEmpty(student.getAadhaarId())) {

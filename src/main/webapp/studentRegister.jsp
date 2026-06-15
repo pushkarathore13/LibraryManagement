@@ -49,14 +49,20 @@ if(message != null){
 <form action="studentRegister" method="post">
 
 Name:
-<input type="text" name="name"
+<input
+type="text"
+name="name"
 value="<%= student != null && !nameRejected ? student.getName() : "" %>"
+pattern="[A-Za-z ]+"
+onkeypress="return ((event.charCode>=65 && event.charCode<=90) || (event.charCode>=97 && event.charCode<=122) || event.charCode==32)"
 required>
 
 <br><br>
 
 Email:
-<input type="email" name="email"
+<input
+type="email"
+name="email"
 value="<%= student != null ? student.getEmail() : "" %>"
 <%= student != null ? "readonly" : "" %>
 required>
@@ -64,8 +70,13 @@ required>
 <br><br>
 
 Mobile:
-<input type="text" name="mobile"
+<input
+type="text"
+name="mobile"
+maxlength="10"
 value="<%= student != null && !mobileRejected ? student.getMobile() : "" %>"
+pattern="[0-9]{10}"
+onkeypress="return event.charCode >= 48 && event.charCode <= 57"
 required>
 
 <br><br>
@@ -93,15 +104,24 @@ Gender:
 <br><br>
 
 Occupation:
-<input type="text" name="occupation"
+<input
+type="text"
+name="occupation"
 value="<%= student != null && !occupationRejected ? student.getOccupation() : "" %>"
+pattern="[A-Za-z ]+"
+onkeypress="return ((event.charCode>=65 && event.charCode<=90) || (event.charCode>=97 && event.charCode<=122) || event.charCode==32)"
 required>
 
 <br><br>
 
 Aadhaar ID:
-<input type="text" name="aadhaar_id"
+<input
+type="text"
+name="aadhaar_id"
+maxlength="12"
 value="<%= student != null && !aadhaarRejected ? student.getAadhaarId() : "" %>"
+pattern="[0-9]{12}"
+onkeypress="return event.charCode >= 48 && event.charCode <= 57"
 required>
 
 <br><br>
