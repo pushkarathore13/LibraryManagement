@@ -92,6 +92,10 @@ public class StudentService {
 				}
 			}
 
+			if ("ENDED".equalsIgnoreCase(existingStudent.getStatus())) {
+				return "Your membership was ended by admin. Please contact admin for reactivation.";
+			}
+
 			return "Email already exists";
 		}
 
@@ -109,7 +113,9 @@ public class StudentService {
 		}
 	}
 
-	public String login(String email, String password) throws Exception {
+	public String login(
+			String email,
+			String password) throws Exception {
 
 		if (isEmpty(email)) {
 			return "Email cannot be empty";
@@ -136,6 +142,19 @@ public class StudentService {
 
 		if ("REJECTED".equalsIgnoreCase(student.getStatus())) {
 			return "Your registration request was rejected";
+		}
+
+		if ("ENDED".equalsIgnoreCase(student.getStatus())) {
+
+			String reason =
+					student.getMembershipEndReason();
+
+			if (reason == null || reason.trim().isEmpty()) {
+				reason = "No reason provided";
+			}
+
+			return "Your membership has been ended by admin. Reason: "
+					+ reason;
 		}
 
 		if (!BCrypt.checkpw(password, student.getPassword())) {
@@ -175,10 +194,16 @@ public class StudentService {
 		}
 
 		String hashedPassword =
-				BCrypt.hashpw(newPassword, BCrypt.gensalt());
+				BCrypt.hashpw(
+						newPassword,
+						BCrypt.gensalt()
+				);
 
 		boolean updated =
-				studentRepository.updatePassword(email, hashedPassword);
+				studentRepository.updatePassword(
+						email,
+						hashedPassword
+				);
 
 		if (updated) {
 			return "success";
@@ -216,10 +241,16 @@ public class StudentService {
 		}
 
 		String hashedPassword =
-				BCrypt.hashpw(newPassword, BCrypt.gensalt());
+				BCrypt.hashpw(
+						newPassword,
+						BCrypt.gensalt()
+				);
 
 		boolean updated =
-				studentRepository.updatePassword(email, hashedPassword);
+				studentRepository.updatePassword(
+						email,
+						hashedPassword
+				);
 
 		if (updated) {
 			return "success";

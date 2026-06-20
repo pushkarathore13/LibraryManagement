@@ -46,7 +46,7 @@ if(message != null){
 }
 %>
 
-<form action="studentRegister" method="post">
+<form action="studentRegister" method="post" onsubmit="return validatePassword()">
 
 Name:
 <input
@@ -127,7 +127,24 @@ required>
 <br><br>
 
 Password:
-<input type="password" name="password" required>
+<input
+type="password"
+name="password"
+id="password"
+required>
+
+<br><br>
+
+Confirm Password:
+<input
+type="password"
+name="confirmPassword"
+id="confirmPassword"
+required>
+
+<br><br>
+
+<span id="passwordMessage" style="color:red;font-weight:bold;"></span>
 
 <br><br>
 
@@ -138,6 +155,34 @@ Password:
 <br>
 
 <a href="index.jsp">Back to Homepage</a>
+
+<script>
+
+function validatePassword(){
+
+	var password =
+			document.getElementById("password").value;
+
+	var confirmPassword =
+			document.getElementById("confirmPassword").value;
+
+	var message =
+			document.getElementById("passwordMessage");
+
+	if(password !== confirmPassword){
+
+		message.innerHTML =
+				"Password and Confirm Password do not match";
+
+		return false;
+	}
+
+	message.innerHTML = "";
+
+	return true;
+}
+
+</script>
 
 </body>
 </html>

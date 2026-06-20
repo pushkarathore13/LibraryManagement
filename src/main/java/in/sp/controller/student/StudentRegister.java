@@ -23,25 +23,47 @@ public class StudentRegister extends HttpServlet {
 	private StudentService studentService = new StudentService();
 
 	@Override
-	protected void doPost(HttpServletRequest req,HttpServletResponse resp)
+	protected void doPost(
+			HttpServletRequest req,
+			HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		Student student = new Student();
+		String password = req.getParameter("password");
 
-		student.setName(req.getParameter("name")); // reads name from form
-		student.setEmail(req.getParameter("email")); // reads email
+		String confirmPassword = req.getParameter("confirmPassword");
+
+		if(password == null ||
+				confirmPassword == null ||
+				!password.equals(confirmPassword)) {
+
+			req.setAttribute(
+					"message",
+					"Password and Confirm Password do not match"
+			);
+
+			req.getRequestDispatcher("/studentRegister.jsp")
+			.forward(req, resp);
+
+			return;
+		}
+
+		Student student =
+				new Student();
+
+		student.setName(req.getParameter("name"));
+		student.setEmail(req.getParameter("email"));
 		student.setMobile(req.getParameter("mobile"));
 		student.setGender(req.getParameter("gender"));
 		student.setOccupation(req.getParameter("occupation"));
 		student.setAadhaarId(req.getParameter("aadhaar_id"));
-		student.setPassword(req.getParameter("password"));
+		student.setPassword(password);
 
 		try {
 			String result = studentService.register(student);
 
 			if ("success".equals(result)) {
 
-				logger.info("Student registration request sent: " + student.getEmail());
+				logger.info( "Student registration request sent: " + student.getEmail() );
 
 				req.setAttribute("message", "Registration request sent to admin. Please wait for approval.");
 
@@ -52,6 +74,7 @@ public class StudentRegister extends HttpServlet {
 			} else {
 
 				req.setAttribute("message", result);
+				req.setAttribute("student", student);
 
 				RequestDispatcher rd = req.getRequestDispatcher("/studentRegister.jsp");
 
@@ -62,9 +85,12 @@ public class StudentRegister extends HttpServlet {
 
 			logger.error("Student registration error", e);
 
-			req.setAttribute( "message","Something went wrong during registration");
+			req.setAttribute("message", "Something went wrong during registration");
 
-			req.getRequestDispatcher("/studentRegister.jsp").forward(req, resp);
+			req.setAttribute("student", student);
+
+			req.getRequestDispatcher("/studentRegister.jsp")
+			.forward(req, resp);
 		}
 	}
 }

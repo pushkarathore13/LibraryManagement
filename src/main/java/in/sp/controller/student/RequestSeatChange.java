@@ -11,33 +11,38 @@ import in.sp.repository.StudentRepository;
 @WebServlet("/requestSeatChange")
 public class RequestSeatChange extends HttpServlet {
 
-    private StudentRepository studentRepository = new StudentRepository();
+	private StudentRepository studentRepository =
+			new StudentRepository();
 
-    @Override
-    protected void doPost(
-            HttpServletRequest req,
-            HttpServletResponse resp)
-            throws ServletException, IOException {
+	@Override
+	protected void doPost(
+			HttpServletRequest req,
+			HttpServletResponse resp)
+			throws ServletException, IOException {
 
-        try {
+		try {
+			String email = (String) req.getSession()
+					.getAttribute("student_email");
 
-            String email = (String) req.getSession()
-                    .getAttribute("student_email");
+			int requestedSeatId = Integer.parseInt( req.getParameter("requestedSeatId"));
 
-            int requestedSeatId = Integer.parseInt(
-                            req.getParameter("requestedSeatId")
-                    );
+			boolean requested = studentRepository.requestSeatChange( email,requestedSeatId);
 
-            studentRepository.requestSeatChange(
-                    email,
-                    requestedSeatId
-            );
+			if(requested) {
+				resp.sendRedirect("studentDashboard");
+			} else {
+				req.setAttribute(
+						"message",
+						"Invalid request. Seat may already be occupied or request already pending."
+				);
 
-            resp.sendRedirect("studentDashboard");
-        } catch (Exception e) {
-            e.printStackTrace();
+				req.getRequestDispatcher("/requestSeatChangePage")
+				.forward(req, resp);
+			}
 
-            resp.sendRedirect("requestSeatChangePage");
-        }
-    }
+		} catch(Exception e) {
+
+			resp.sendRedirect("requestSeatChangePage");
+		}
+	}
 }

@@ -13,14 +13,15 @@ public class Student {
 	private String aadhaarId;
 	private String password;
 	private String status;
-
 	private String rejectionReason;
 
 	private Date membershipStart;
 	private Date membershipEnd;
-
 	private int seatId;
 	private Date seatReservedUntil;
+
+	private String shiftName;
+	private String membershipEndReason;
 
 	public int getStudentId() {
 		return studentId;
@@ -132,5 +133,21 @@ public class Student {
 
 	public void setSeatReservedUntil(Date seatReservedUntil) {
 		this.seatReservedUntil = seatReservedUntil;
+	}
+
+	public String getShiftName() {
+		return shiftName;
+	}
+
+	public void setShiftName(String shiftName) {
+		this.shiftName = shiftName;
+	}
+
+	public String getMembershipEndReason() {
+		return membershipEndReason;
+	}
+
+	public void setMembershipEndReason(String membershipEndReason) {
+		this.membershipEndReason = membershipEndReason;
 	}
 }

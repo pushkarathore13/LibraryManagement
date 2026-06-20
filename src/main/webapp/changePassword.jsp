@@ -1,3 +1,13 @@
+<%
+response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+response.setHeader("Pragma", "no-cache");
+response.setDateHeader("Expires", 0);
+
+if(session.getAttribute("student_email") == null){
+	response.sendRedirect("login.jsp");
+	return;
+}
+%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 

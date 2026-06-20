@@ -1,3 +1,13 @@
+<%
+response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+response.setHeader("Pragma", "no-cache");
+response.setDateHeader("Expires", 0);
+
+if(session.getAttribute("student_email") == null){
+	response.sendRedirect("login.jsp");
+	return;
+}
+%>
 <%@ page import="java.util.List" %>
 <%@ page import="in.sp.model.Seat" %>
 <%@ page import="in.sp.model.Student" %>
@@ -187,6 +197,18 @@ body{
 	font-size:15px;
 }
 
+.shift-box{
+	margin-top:20px;
+	margin-bottom:20px;
+}
+
+.shift-box select{
+	padding:8px;
+	border-radius:6px;
+	border:1px solid #999;
+	font-size:15px;
+}
+
 .links{
 	margin-top:20px;
 	text-align:center;
@@ -237,6 +259,11 @@ if(activeMember != null && activeMember && student.getSeatId() > 0){
 <p>
 <b>Current Seat ID :</b>
 <%= student.getSeatId() %>
+</p>
+
+<p>
+<b>Shift :</b>
+<%= student.getShiftName() != null ? student.getShiftName() : "" %>
 </p>
 
 <%
@@ -355,7 +382,7 @@ for(int i = 0; i < seats.size(); i = i + 30){
 %>
 
 <label class="seat available">
-<input type="radio" name="seatId" value="<%= seat.getSeatId() %>">
+<input type="radio" name="seatId" value="<%= seat.getSeatId() %>" required>
 <span><%= seat.getSeatNumber() %></span>
 </label>
 
@@ -397,7 +424,7 @@ TABLE
 %>
 
 <label class="seat available">
-<input type="radio" name="seatId" value="<%= seat.getSeatId() %>">
+<input type="radio" name="seatId" value="<%= seat.getSeatId() %>" required>
 <span><%= seat.getSeatNumber() %></span>
 </label>
 
@@ -421,7 +448,21 @@ TABLE
 }
 %>
 
-<br>
+<div class="shift-box">
+
+<label>
+<b>Select Shift :</b>
+</label>
+
+<select name="shiftName" required>
+	<option value="">Select Shift</option>
+	<option value="Morning">Morning</option>
+	<option value="Afternoon">Afternoon</option>
+	<option value="Evening">Evening</option>
+	<option value="Full Day">Full Day</option>
+</select>
+
+</div>
 
 <input type="submit" value="Select Seat" class="btn">
 

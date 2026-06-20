@@ -16,14 +16,11 @@ import in.sp.util.RegexPatterns;
 @WebServlet("/login")
 public class Login extends HttpServlet {
 
-	private AdminService adminService =
-			new AdminService();
+	private AdminService adminService = new AdminService();
 
-	private StudentService studentService =
-			new StudentService();
+	private StudentService studentService = new StudentService();
 
-	private StudentRepository studentRepository =
-			new StudentRepository();
+	private StudentRepository studentRepository = new StudentRepository();
 
 	@Override
 	protected void doPost(
@@ -31,11 +28,9 @@ public class Login extends HttpServlet {
 			HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		String email =
-				req.getParameter("email");
+		String email = req.getParameter("email");
 
-		String password =
-				req.getParameter("password");
+		String password = req.getParameter("password");
 
 		if(email == null || email.trim().isEmpty()) {
 			req.setAttribute("message", "Email cannot be empty");
@@ -59,25 +54,18 @@ public class Login extends HttpServlet {
 		}
 
 		try {
-			boolean adminValid =
-					adminService.login(email, password);
+			boolean adminValid = adminService.login(email, password);
 
 			if(adminValid) {
-
-				HttpSession session =
-						req.getSession();
-
+				HttpSession session = req.getSession();
 				session.setAttribute("admin_email", email);
-
 				resp.sendRedirect("adminDashboard");
 				return;
 			}
 
-			Student student =
-					studentRepository.findByEmail(email);
+			Student student = studentRepository.findByEmail(email);
 
-			if(student != null &&
-					"REJECTED".equalsIgnoreCase(student.getStatus())) {
+			if(student != null && "REJECTED".equalsIgnoreCase(student.getStatus())) {
 
 				req.setAttribute(
 						"message",
@@ -93,31 +81,22 @@ public class Login extends HttpServlet {
 				return;
 			}
 
-			String studentResult =
-					studentService.login(email, password);
+			String studentResult = studentService.login(email, password);
 
 			if("success".equals(studentResult)) {
-
-				HttpSession session =
-						req.getSession();
-
+				HttpSession session = req.getSession();
 				session.setAttribute("student_email", email);
-
 				resp.sendRedirect("studentDashboard");
 				return;
 
 			} else {
-
 				req.setAttribute("message", studentResult);
-
 				req.getRequestDispatcher("/login.jsp")
 				.forward(req, resp);
 			}
 
 		} catch(Exception e) {
-
 			e.printStackTrace();
-
 			req.setAttribute(
 					"message",
 					"Something went wrong during login"

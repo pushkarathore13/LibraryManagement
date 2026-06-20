@@ -14,11 +14,11 @@ if(session.getAttribute("admin_email") == null){
 <!DOCTYPE html>
 <html>
 <head>
-<title>Active Members</title>
+<title>End Membership</title>
 </head>
 <body>
 
-<h2>Active Members Information</h2>
+<h2>End Student Membership</h2>
 
 <table border="1" cellpadding="8">
 
@@ -34,6 +34,8 @@ if(session.getAttribute("admin_email") == null){
 <th>Shift</th>
 <th>Membership Start</th>
 <th>Membership End</th>
+<th>Reason</th>
+<th>Action</th>
 </tr>
 
 <%
@@ -45,6 +47,8 @@ if(activeMembers != null && !activeMembers.isEmpty()) {
 %>
 
 <tr>
+<form action="endMembership" method="post">
+
 <td><%= s.getStudentId() %></td>
 <td><%= s.getName() %></td>
 <td><%= s.getEmail() %></td>
@@ -56,6 +60,17 @@ if(activeMembers != null && !activeMembers.isEmpty()) {
 <td><%= s.getShiftName() != null ? s.getShiftName() : "-" %></td>
 <td><%= s.getMembershipStart() %></td>
 <td><%= s.getMembershipEnd() %></td>
+
+<td>
+<input type="text" name="reason" placeholder="Enter reason" required>
+<input type="hidden" name="studentId" value="<%= s.getStudentId() %>">
+</td>
+
+<td>
+<input type="submit" value="End Membership">
+</td>
+
+</form>
 </tr>
 
 <%
@@ -64,7 +79,7 @@ if(activeMembers != null && !activeMembers.isEmpty()) {
 %>
 
 <tr>
-<td colspan="11">No active members found</td>
+<td colspan="13">No active members found</td>
 </tr>
 
 <%

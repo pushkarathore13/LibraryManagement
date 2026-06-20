@@ -20,14 +20,20 @@ public class AdminDashboard extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
+			studentRepository.releaseAllExpiredSeats();
+			studentRepository.endMembershipForNoSeatApprovedStudents();
 			int activeMemberships = studentRepository.totalActiveMemberships();
 
-			req.setAttribute( "activeMemberships", activeMemberships);
+			int selectedSeats = studentRepository.totalSelectedSeats();
+
+			req.setAttribute("activeMemberships", activeMemberships);
+			req.setAttribute("selectedSeats", selectedSeats);
 
 			req.getRequestDispatcher("/adminDashboard.jsp")
 			.forward(req, resp);
 
 		} catch(Exception e) {
+
 			req.getRequestDispatcher("/adminDashboard.jsp")
 			.forward(req, resp);
 		}

@@ -28,7 +28,7 @@ public class StudentDashboard extends HttpServlet {
 			throws ServletException, IOException {
 
 		try {
-			String email =(String) req.getSession()
+			String email = (String) req.getSession()
 					.getAttribute("student_email");
 
 			Student student = studentRepository.findByEmail(email);
@@ -36,28 +36,36 @@ public class StudentDashboard extends HttpServlet {
 			boolean activeMember = false;
 			boolean renewAllowed = false;
 
-			if (student.getMembershipEnd() != null) {
+			if(student.getMembershipEnd() != null) {
 
 				LocalDate endDate = student.getMembershipEnd().toLocalDate();
 
 				LocalDate today = LocalDate.now();
 
-				if (!endDate.isBefore(today)) {
+				if(!endDate.isBefore(today)) {
 					activeMember = true;
 				}
 
-				long daysAfterExpiry =ChronoUnit.DAYS.between(endDate, today);
+				long daysAfterExpiry = ChronoUnit.DAYS.between(endDate, today);
 
-				if (daysAfterExpiry >= 0 && daysAfterExpiry <= 5) {
+				if(daysAfterExpiry >= 0 && daysAfterExpiry <= 5) {
 					renewAllowed = true;
+				}
+
+				if(daysAfterExpiry > 5) {
+					studentRepository.releaseExpiredSeat(email);
+
+					student = studentRepository.findByEmail(email);
+
+					activeMember = false;
+					renewAllowed = false;
 				}
 			}
 
 			List<Seat> availableSeats = null;
 
-			if (!activeMember || student.getSeatId() == 0) {
-				availableSeats =
-						seatRepository.allSeats();
+			if(!activeMember || student.getSeatId() == 0) {
+				availableSeats = seatRepository.allSeats();
 			}
 
 			boolean seatChangePending = studentRepository
@@ -72,12 +80,9 @@ public class StudentDashboard extends HttpServlet {
 			req.getRequestDispatcher("/studentDashboard.jsp")
 			.forward(req, resp);
 
-		} catch (Exception e) {
+		} catch(Exception e) {
 
-			req.setAttribute(
-					"message",
-					"Dashboard loading failed"
-			);
+			req.setAttribute("message", "Dashboard loading failed");
 
 			req.getRequestDispatcher("/login.jsp")
 			.forward(req, resp);

@@ -15,21 +15,17 @@ public class Logout extends HttpServlet {
 			HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		HttpSession session = req.getSession(false);
+		HttpSession session =
+				req.getSession(false);
 
 		if(session != null) {
 			session.invalidate();
 		}
 
-		resp.setHeader("Cache-Control","no-cache, no-store, must-revalidate");// prevents browser from caching pages
+		resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+		resp.setHeader("Pragma", "no-cache");
+		resp.setDateHeader("Expires", 0);
 
-		resp.setHeader("Pragma","no-cache"); // cache control for old browser
-
-		resp.setDateHeader(
-				"Expires",
-				0
-		);
-
-		resp.sendRedirect("index.jsp");
+		resp.sendRedirect("login.jsp");
 	}
 }

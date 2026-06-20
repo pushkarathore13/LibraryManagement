@@ -1,3 +1,13 @@
+<%
+response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+response.setHeader("Pragma", "no-cache");
+response.setDateHeader("Expires", 0);
+
+if(session.getAttribute("admin_email") == null){
+	response.sendRedirect("login.jsp");
+	return;
+}
+%>
 <%@ page import="java.util.List" %>
 <%@ page import="in.sp.model.Student" %>
 
